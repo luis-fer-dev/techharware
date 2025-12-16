@@ -19,6 +19,12 @@ export default function TiendaClient({ initialProducts }: TiendaClientProps) {
   const [loading, setLoading] = useState(false) // Ya cargamos, así que empezamos en false
   const [categoriaActiva, setCategoriaActiva] = useState('Todos')
   // ... (el resto de tus estados, modales, etc.)
+const [selectedProduct, setSelectedProduct] = useState<Producto | null>(null)
+
+const openProductDetail = (product: Producto) => {
+  setSelectedProduct(product)
+}
+
 
   // Funciones del carrito
   const cargarCarritoLocalStorage = () => {
@@ -51,12 +57,14 @@ export default function TiendaClient({ initialProducts }: TiendaClientProps) {
       {/* Grid de Productos */}
       <section className="product-grid">
         {productosFiltrados.map(product => (
-          <ProductCard 
-            key={product.id} 
-            product={product} 
-            // 💡 PASAMOS la función como PROP
-            onAddToCart={agregarAlCarrito} 
-          />
+          <ProductCard
+  key={product.id}
+  product={product}
+  onAddToCart={agregarAlCarrito}
+  onViewDetail={openProductDetail}
+/>
+
+
         ))}
       </section>
 
