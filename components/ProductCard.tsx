@@ -1,7 +1,7 @@
 // components/ProductCard.tsx
 'use client'
 
-import React from 'react'
+import React, { useState } from 'react'
 import Image from 'next/image'
 import { motion } from 'framer-motion'
 import { ShoppingCart, Package, Heart } from 'lucide-react'
@@ -27,6 +27,7 @@ export default function ProductCard({
   const { nombre, precio, imagen, descuento, stock } = product
   const precioFinal = precio * (1 - descuento / 100)
   const hasStock = stock > 0
+  const [imageError, setImageError] = useState(false)
 
   return (
     <motion.article 
@@ -69,24 +70,40 @@ export default function ProductCard({
         </motion.button>
       )}
 
-      {/* Imagen optimizada */}
+      {/* Imagen optimizada con fallback */}
       <motion.button 
         onClick={() => onViewDetail(product)}
         className="producto-imagen-container"
         whileHover={{ scale: 1.05 }}
         style={{ border: 'none', background: 'none', cursor: 'pointer', padding: 0, width: '100%' }}
       >
-        <Image 
-          src={imagen} 
-          alt={nombre}
-          width={300}
-          height={220}
-          className="producto-imagen"
-          style={{ objectFit: 'contain' }}
-          loading="lazy"
-          placeholder="blur"
-          blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mN8/5+hHgAHggJ/PchI7wAAAABJRU5ErkJggg=="
-        />
+        {!imageError ? (
+          <Image 
+            src={imagen} 
+            alt={nombre}
+            width={300}
+            height={220}
+            className="producto-imagen"
+            style={{ objectFit: 'contain' }}
+            loading="lazy"
+            onError={() => setImageError(true)}
+            unoptimized={imagen.includes('unsplash') || imagen.includes('via.placeholder')}
+          />
+        ) : (
+          <div 
+            style={{ 
+              width: '100%', 
+              height: '220px', 
+              display: 'flex', 
+              alignItems: 'center', 
+              justifyContent: 'center',
+              background: '#f0f0f0',
+              color: '#999'
+            }}
+          >
+            <Package size={48} />
+          </div>
+        )}
       </motion.button>
 
       <div className="producto-info">

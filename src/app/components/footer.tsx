@@ -23,12 +23,12 @@ export default function Footer() {
         <div className="footer-section">
           <h4>Navegación</h4>
           <ul>
-            <li><a href="/">Inicio</a></li>
-            <li><a href="/#productos">Productos</a></li>
-            <li><a href="/#servicios">Servicios</a></li>
-            <li><a href="/#contacto">Contacto</a></li>
+            <li><a href="#inicio">Inicio</a></li>
+            <li><a href="#productos">Productos</a></li>
+            <li><a href="#servicios">Servicios</a></li>
+            <li><a href="/contact">Contacto</a></li>
+            <li><a href="/about">Sobre Nosotros</a></li>
             {/* Si quieres un enlace a admin para ti: */}
-            <li><a href="/admin">Panel Admin</a></li> 
           </ul>
         </div>
 

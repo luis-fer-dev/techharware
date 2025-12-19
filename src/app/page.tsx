@@ -8,6 +8,7 @@ import { useWishlist } from '@/src/app/hooks/useWishlist'
 import { useDarkMode } from '@/src/app/hooks/useDarkMode'
 import ProductCard from '@/components/ProductCard'
 import ProductFilters, { type FilterState } from '@/src/app/components/ProductFilters'
+import ProductDetailModal from '@/src/app/components/ProductDetailModal'
 import { ProductGridSkeleton } from '@/src/app/components/SkeletonLoader'
 import Footer from '@/src/app/components/footer'
 import toast from 'react-hot-toast'
@@ -110,12 +111,10 @@ export default function TiendaPage() {
   // Aplicar filtros
   let productosFiltrados = productos
 
-  // Filtro de categoría
   if (filters.categoria !== 'Todos') {
     productosFiltrados = productosFiltrados.filter(p => p.categoria === filters.categoria)
   }
 
-  // Filtro de búsqueda
   if (searchTerm.length >= 2) {
     productosFiltrados = productosFiltrados.filter(p =>
       p.nombre.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -124,23 +123,19 @@ export default function TiendaPage() {
     )
   }
 
-  // Filtro de precio
   productosFiltrados = productosFiltrados.filter(p => {
     const precioFinal = p.precio * (1 - p.descuento / 100)
     return precioFinal >= filters.precioMin && precioFinal <= filters.precioMax
   })
 
-  // Filtro de stock
   if (filters.soloEnStock) {
     productosFiltrados = productosFiltrados.filter(p => p.stock > 0)
   }
 
-  // Filtro de descuento
   if (filters.conDescuento) {
     productosFiltrados = productosFiltrados.filter(p => p.descuento > 0)
   }
 
-  // Ordenamiento
   productosFiltrados = [...productosFiltrados].sort((a, b) => {
     switch (filters.ordenar) {
       case 'precio-asc':
@@ -221,8 +216,12 @@ export default function TiendaPage() {
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }
 
-  const minPrice = Math.min(...productos.map(p => p.precio * (1 - p.descuento / 100)))
-  const maxPrice = Math.max(...productos.map(p => p.precio * (1 - p.descuento / 100)))
+  const minPrice = productos.length > 0 
+    ? Math.min(...productos.map(p => p.precio * (1 - p.descuento / 100))) 
+    : 0
+  const maxPrice = productos.length > 0 
+    ? Math.max(...productos.map(p => p.precio * (1 - p.descuento / 100))) 
+    : 10000
 
   return (
     <>
@@ -233,6 +232,7 @@ export default function TiendaPage() {
             📞 +58 424 5966903 (Ventas)
           </a>
           <span>🕒 Lunes a Viernes: 8:00am - 5:00pm</span>
+          <li><a href="/about">Sobre Nosotros</a></li>
         </div>
       </div>
 
@@ -372,7 +372,6 @@ export default function TiendaPage() {
           />
         </div>
 
-        {/* Contador de resultados */}
         <motion.div 
           className="results-count"
           initial={{ opacity: 0 }}
@@ -412,6 +411,23 @@ export default function TiendaPage() {
           </div>
         )}
       </div></section>
+
+      {/* MODAL DETALLE PRODUCTO */}
+      <AnimatePresence>
+        {productDetailModalOpen && (
+          <ProductDetailModal
+            product={selectedProduct}
+            isOpen={productDetailModalOpen}
+            onClose={() => {
+              setProductDetailModalOpen(false)
+              setSelectedProduct(null)
+            }}
+            onAddToCart={addToCart}
+            onToggleWishlist={toggleWishlist}
+            isInWishlist={selectedProduct ? isInWishlist(selectedProduct.id) : false}
+          />
+        )}
+      </AnimatePresence>
 
       {/* MODAL CARRITO */}
       <AnimatePresence>
