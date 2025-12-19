@@ -19,7 +19,7 @@ export interface Producto {
   descuento: number
   stock: number
   stock_minimo: number
-  especificaciones?: unknown
+  especificaciones?: Record<string, string> | string
   created_at?: string
 }
 
